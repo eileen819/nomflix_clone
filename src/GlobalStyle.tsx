@@ -10,9 +10,9 @@ export const GlobalStyle = createGlobalStyle`
     font-weight: 300;
     font-family: 'Source Sans Pro', sans-serif;
     /* background-color:${(props) => props.theme.bgColor}; */
-    color:black;
+    color: ${(props) => props.theme.white.darker};
     line-height: 1.2;
-    /* background:linear-gradient(135deg,#e09,#d0e); */
+    background-color: black;
   }
   a {
     text-decoration:none;
