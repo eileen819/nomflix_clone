@@ -5,8 +5,10 @@ import {
   useScroll,
 } from "framer-motion";
 import { useRef, useState } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import Search from "./Search";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -67,35 +69,6 @@ const Circle = styled(motion.span)`
   margin: 0 auto;
 `;
 
-const Search = styled.span`
-  position: relative;
-  display: flex;
-  align-items: center;
-  color: white;
-  label {
-    position: absolute;
-    right: 0;
-    bottom: -16px;
-    margin-right: 5px;
-  }
-  svg {
-    height: 25px;
-  }
-`;
-
-const Input = styled(motion.input)`
-  transform-origin: right center;
-  position: absolute;
-  right: 0;
-  z-index: -1;
-  padding: 7px 10px 5px 40px;
-  border: 1px solid ${(props) => props.theme.white.lighter};
-  outline: none;
-  background-color: transparent;
-  color: white;
-  font-size: 16px;
-`;
-
 const logoVariants = {
   normal: {
     fillOpacity: 1,
@@ -114,24 +87,11 @@ const navVariants = {
 };
 
 function Header() {
-  const searchRef = useRef<HTMLSpanElement>(null);
-  const searchIconRef = useRef<SVGSVGElement>(null);
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("/tv");
-
-  const [searchOpen, setSearchOpen] = useState(false);
-  const { scrollY } = useScroll();
-  const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
 
-  const toggleSearch = () => {
-    if (searchOpen) {
-      inputAnimation.start({ scaleX: 0 });
-    } else {
-      inputAnimation.start({ scaleX: 1 });
-    }
-    setSearchOpen((prev) => !prev);
-  };
+  const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", () => {
     if (scrollY.get() > 80) {
@@ -140,23 +100,6 @@ function Header() {
       navAnimation.start("top");
     }
   });
-
-  /* useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        searchRef.current &&
-        searchIconRef.current &&
-        !searchRef.current.contains(event.target as Node) &&
-        !searchIconRef.current.contains(event.target as Node)
-      ) {
-        setSearchOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-  // 로고나 메뉴 부분을 클릭해도 동작이 됨, 해당 부분의 해결이 필요함
- */
 
   return (
     <Nav variants={navVariants} initial="top" animate={navAnimation}>
@@ -184,35 +127,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search ref={searchRef}>
-          <label htmlFor="search">
-            <motion.svg
-              ref={searchIconRef}
-              onClick={toggleSearch}
-              transition={{ ease: "linear" }}
-              animate={{ x: searchOpen ? -180 : 0 }}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                clipRule="evenodd"
-              ></path>
-            </motion.svg>
-          </label>
-          <Input
-            id="search"
-            transition={{ ease: "linear" }}
-            initial={{ scaleX: 0 }}
-            animate={inputAnimation}
-            // animate={{
-            //   scaleX: searchOpen ? 1 : 0,
-            // }}
-            placeholder="Search for movie or tv show..."
-          />
-        </Search>
+        <Search />
       </Col>
     </Nav>
   );
