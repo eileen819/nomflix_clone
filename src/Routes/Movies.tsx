@@ -8,16 +8,16 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-function Tv() {
+function Movies() {
   return (
     <Wrapper>
       <Banner
-        queryName="tv"
-        queryEndPointName="airingToday"
-        queryUrl={requests.getAiringTodayTv}
+        queryName="movies"
+        queryEndPointName="popularMovies"
+        queryUrl={requests.getPopularMovies}
       />
     </Wrapper>
   );
 }
 
-export default Tv;
+export default Movies;

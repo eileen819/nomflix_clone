@@ -12,22 +12,20 @@ const Wrapper = styled.form`
   label {
     position: absolute;
     right: 0;
-    bottom: -16px;
+    bottom: -17px;
     margin-right: 5px;
-  }
-  svg {
-    height: 25px;
   }
 `;
 
 const Input = styled(motion.input)`
+  width: 220px;
   transform-origin: right center;
   position: absolute;
   right: 0;
   z-index: -1;
-  padding: 7px 10px 5px 40px;
+  padding: 7px 10px 7px 40px;
   border: 1px solid ${(props) => props.theme.white.darker};
-  border-radius: 5px;
+  border-radius: 3px;
   outline: none;
   background-color: transparent;
   color: white;
@@ -35,14 +33,17 @@ const Input = styled(motion.input)`
 `;
 
 const Svg = styled(motion.svg)`
+  width: 20px;
+  height: 25px;
   fill: ${(props) => props.theme.white.darker};
+  cursor: pointer;
 `;
 
 interface IForm {
   keyword: string;
 }
 
-function Search() {
+function SearchBar() {
   const searchRef = useRef<HTMLFormElement>(null);
   const searchIconRef = useRef<SVGSVGElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -87,7 +88,7 @@ function Search() {
           ref={searchIconRef}
           onClick={toggleSearch}
           transition={{ ease: "linear" }}
-          animate={{ x: searchOpen ? -180 : 0 }}
+          animate={{ x: searchOpen ? -185 : 0 }}
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -110,4 +111,4 @@ function Search() {
   );
 }
 
-export default Search;
+export default SearchBar;

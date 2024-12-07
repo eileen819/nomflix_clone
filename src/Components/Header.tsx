@@ -4,11 +4,9 @@ import {
   useMotionValueEvent,
   useScroll,
 } from "framer-motion";
-import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import Search from "./Search";
+import SearchBar from "./SearchBar";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -17,6 +15,8 @@ const Nav = styled(motion.nav)`
   position: fixed;
   width: 100%;
   top: 0;
+  left: 0;
+  right: 0;
   font-size: 14px;
   color: white;
   padding: 20px 60px;
@@ -57,15 +57,24 @@ const Item = styled.li`
   }
 `;
 
-const Circle = styled(motion.span)`
+const MenuTitle = styled.span`
+  font-weight: 500;
+  opacity: 0.7;
+  transition: opacity 0.3s ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const Circle = styled(motion.div)`
   width: 5px;
   height: 5px;
-  border-radius: 5px;
+  border-radius: 2.5px;
   background-color: ${(props) => props.theme.red};
   position: absolute;
-  bottom: -5px;
   left: 0;
   right: 0;
+  bottom: -5px;
   margin: 0 auto;
 `;
 
@@ -82,16 +91,19 @@ const logoVariants = {
 };
 
 const navVariants = {
-  top: { backgroundColor: "rgba(0,0,0,0)" },
-  scroll: { backgroundColor: "rgba(0,0,0,1)" },
+  top: {
+    background: "linear-gradient(to bottom, rgba(0,0,0,0.5) , rgba(0,0,0,0))",
+  },
+  scroll: { background: "linear-gradient(rgba(0,0,0,1) , rgba(0,0,0,1))" },
 };
 
 function Header() {
+  const navigate = useNavigate();
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("/tv");
-  const navAnimation = useAnimation();
-
+  const moviesMatch = useMatch("/movies");
   const { scrollY } = useScroll();
+  const navAnimation = useAnimation();
 
   useMotionValueEvent(scrollY, "change", () => {
     if (scrollY.get() > 80) {
@@ -102,9 +114,15 @@ function Header() {
   });
 
   return (
-    <Nav variants={navVariants} initial="top" animate={navAnimation}>
+    <Nav
+      variants={navVariants}
+      initial="top"
+      animate={navAnimation}
+      transition={{ duration: 0.3 }}
+    >
       <Col>
         <Logo
+          onClick={() => navigate("/")}
           variants={logoVariants}
           initial="normal"
           whileHover="active"
@@ -117,17 +135,27 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="/">Home {homeMatch && <Circle layoutId="circle" />}</Link>
+            <Link to="/">
+              <MenuTitle>Home</MenuTitle>
+              {homeMatch && <Circle layoutId="circle" />}
+            </Link>
           </Item>
           <Item>
             <Link to="/tv">
-              Tv Shows {tvMatch && <Circle layoutId="circle" />}
+              <MenuTitle>Tv Shows</MenuTitle>
+              {tvMatch && <Circle layoutId="circle" />}
+            </Link>
+          </Item>
+          <Item>
+            <Link to="/movies">
+              <MenuTitle>Movies</MenuTitle>
+              {moviesMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
         </Items>
       </Col>
       <Col>
-        <Search />
+        <SearchBar />
       </Col>
     </Nav>
   );
