@@ -13,7 +13,7 @@ function Movies() {
     <Wrapper>
       <Banner
         queryName="movies"
-        queryEndPointName="popularMovies"
+        queryId="popularMovies"
         queryUrl={requests.getPopularMovies}
       />
     </Wrapper>

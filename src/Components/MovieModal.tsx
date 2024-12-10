@@ -1,15 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { makeImagePath } from "../utils";
+import { generateUniqueId, makeImagePath } from "../utils";
 import { IResult } from "../api/interfaceData";
-
-const Wrapper = styled.div``;
 
 const Overlay = styled(motion.div)`
   z-index: 2;
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
@@ -17,14 +16,11 @@ const Overlay = styled(motion.div)`
 `;
 
 const BigMovie = styled(motion.div)`
-  z-index: 2;
+  z-index: 999;
   position: fixed;
   width: 60vw;
   height: 75vh;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   margin: auto;
   background-color: ${(props) => props.theme.black.darker};
   border-radius: 15px;
@@ -62,9 +58,11 @@ const BigOverview = styled.p`
 
 interface IMovieModalProp {
   movies: IResult[];
+  queryId: string;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MovieModal({ movies }: IMovieModalProp) {
+function MovieModal({ movies, queryId, setModalOpen }: IMovieModalProp) {
   const navigate = useNavigate();
   const bigMovieMatch = useMatch("/movies/:movieId");
   const onOverlayClick = () => navigate("/");
@@ -74,30 +72,36 @@ function MovieModal({ movies }: IMovieModalProp) {
     movies.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
 
   return (
-    <Wrapper>
-      <AnimatePresence>
-        {bigMovieMatch ? (
-          <>
-            <Overlay
-              onClick={onOverlayClick}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <BigMovie layoutId={`movie-detail-${bigMovieMatch.params.movieId}`}>
-              {clickedMovie && (
-                <>
-                  <BigCover
-                    $bgPhoto={makeImagePath(clickedMovie.backdrop_path)}
-                  />
-                  <BigTitle>{clickedMovie.title || clickedMovie.name}</BigTitle>
-                  <BigOverview>{clickedMovie.overview}</BigOverview>
-                </>
-              )}
-            </BigMovie>
-          </>
-        ) : null}
-      </AnimatePresence>
-    </Wrapper>
+    <AnimatePresence onExitComplete={() => setModalOpen(false)}>
+      {bigMovieMatch ? (
+        <>
+          <Overlay
+            onClick={onOverlayClick}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, type: "tween" }}
+          />
+          <BigMovie
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, type: "tween" }}
+            layoutId={generateUniqueId(queryId, +bigMovieMatch.params.movieId!)}
+          >
+            {clickedMovie && (
+              <>
+                <BigCover
+                  $bgPhoto={makeImagePath(clickedMovie.backdrop_path)}
+                />
+                <BigTitle>{clickedMovie.title || clickedMovie.name}</BigTitle>
+                <BigOverview>{clickedMovie.overview}</BigOverview>
+              </>
+            )}
+          </BigMovie>
+        </>
+      ) : null}
+    </AnimatePresence>
   );
 }
 

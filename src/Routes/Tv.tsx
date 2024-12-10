@@ -13,7 +13,7 @@ function Tv() {
     <Wrapper>
       <Banner
         queryName="tv"
-        queryEndPointName="airingToday"
+        queryId="airingToday"
         queryUrl={requests.getAiringTodayTv}
       />
     </Wrapper>

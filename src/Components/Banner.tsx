@@ -35,13 +35,13 @@ const Overview = styled.p`
 
 interface IBannerProps {
   queryName: string;
-  queryEndPointName: string;
+  queryId: string;
   queryUrl: string;
 }
 
-function Banner({ queryName, queryEndPointName, queryUrl }: IBannerProps) {
+function Banner({ queryName, queryId, queryUrl }: IBannerProps) {
   const { isLoading, data } = useQuery<IGetResults>({
-    queryKey: [queryName, queryEndPointName],
+    queryKey: [queryName, queryId],
     queryFn: () => getMovies(queryUrl),
   });
 

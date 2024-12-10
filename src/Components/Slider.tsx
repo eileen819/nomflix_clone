@@ -243,7 +243,6 @@ function Slider({ movies, title }: ISliderProps) {
         >
           <FaGreaterThan />
         </ArrowBtn>
-        <MovieModal movies={movies} />
       </Container>
     </Wrapper>
   );
