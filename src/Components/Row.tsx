@@ -4,9 +4,8 @@ import { getMovies } from "../api/api";
 import styled from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper";
-import { Scrollbar } from "swiper/modules";
 import "swiper/css";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Box from "./Box";
 import MovieModal from "./MovieModal";
 import { motion } from "framer-motion";
@@ -40,7 +39,7 @@ const StyledSwiperSlide = styled(SwiperSlide)`
 `;
 
 const NavBtn = styled(motion.div)<{ $position: string }>`
-  z-index: 5;
+  z-index: 1;
   font-size: 25px;
   border: 1px solid ${(props) => props.theme.white.darker};
   background-color: rgba(0, 0, 0, 0.5);
@@ -81,28 +80,15 @@ function Row({ title, queryName, queryId, queryUrl }: IRowProps) {
     queryFn: () => getMovies(queryUrl),
   });
   const [modalOpen, setModalOpen] = useState(false);
-  const [index, setIndex] = useState(0);
-  const itemsPerPage = 6;
-  const handleIndex = (newDirection: TypeNavigation) => {
+  const handleNavigation = (newDirection: TypeNavigation) => {
     if (data?.results && swiperRef.current) {
-      const maxIndex = Math.floor(data?.results.length / itemsPerPage) - 1;
-      if (
-        (newDirection === "NEXT" && index >= maxIndex) ||
-        (newDirection === "PREV" && index <= 0)
-      )
-        return;
-      setIndex((prev) => {
-        if (newDirection === "NEXT") {
-          return prev + 1;
-        } else {
-          return prev - 1;
-        }
-      });
+      if (newDirection === "NEXT") {
+        swiperRef.current?.slideNext(1000);
+      } else {
+        swiperRef.current.slidePrev(1000);
+      }
     }
   };
-  useEffect(() => {
-    swiperRef.current?.slideTo(index * itemsPerPage, 500); // Swiper 이동
-  }, [index]);
 
   return (
     <Wrapper>
@@ -112,17 +98,17 @@ function Row({ title, queryName, queryId, queryUrl }: IRowProps) {
         <>
           <Title>{title}</Title>
           <StyledSwiper
-            modules={[Scrollbar]}
             slidesPerView={6}
-            spaceBetween={10}
+            slidesPerGroup={6}
+            spaceBetween={5}
             onSwiper={(swiper: SwiperType) => (swiperRef.current = swiper)}
-            scrollbar={{ hide: true, draggable: false }}
           >
             {data?.results.slice(0, 18).map((movie, i) => (
               <StyledSwiperSlide key={`${queryId}_${i}_${movie.id}`}>
                 <Box
                   index={i}
                   {...movie}
+                  queryName={queryName}
                   queryId={queryId}
                   setModalOpen={setModalOpen}
                 >
@@ -131,15 +117,16 @@ function Row({ title, queryName, queryId, queryUrl }: IRowProps) {
               </StyledSwiperSlide>
             ))}
           </StyledSwiper>
-          <NavBtn $position="prev" onClick={() => handleIndex("PREV")}>
+          <NavBtn $position="prev" onClick={() => handleNavigation("PREV")}>
             {"<"}
           </NavBtn>
-          <NavBtn $position="next" onClick={() => handleIndex("NEXT")}>
+          <NavBtn $position="next" onClick={() => handleNavigation("NEXT")}>
             {">"}
           </NavBtn>
           {modalOpen && (
             <MovieModal
               movies={data?.results!}
+              queryName={queryName}
               queryId={queryId}
               setModalOpen={setModalOpen}
             />
@@ -151,3 +138,26 @@ function Row({ title, queryName, queryId, queryUrl }: IRowProps) {
 }
 
 export default Row;
+
+// const [index, setIndex] = useState(0);
+// const itemsPerPage = 6;
+// const handleIndex = (newDirection: TypeNavigation) => {
+//   if (data?.results && swiperRef.current) {
+//     const maxIndex = Math.floor(data?.results.length / itemsPerPage) - 1;
+//     if (
+//       (newDirection === "NEXT" && index >= maxIndex) ||
+//       (newDirection === "PREV" && index <= 0)
+//     )
+//       return;
+//     setIndex((prev) => {
+//       if (newDirection === "NEXT") {
+//         return prev + 1;
+//       } else {
+//         return prev - 1;
+//       }
+//     });
+//   }
+// };
+// useEffect(() => {
+//   swiperRef.current?.slideTo(index * itemsPerPage, 500); // Swiper 이동
+// }, [index]);

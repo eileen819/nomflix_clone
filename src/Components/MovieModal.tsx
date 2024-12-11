@@ -57,23 +57,34 @@ const BigOverview = styled.p`
 `;
 
 interface IMovieModalProp {
-  movies: IResult[];
+  movies?: IResult[];
+  queryName: string;
   queryId: string;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MovieModal({ movies, queryId, setModalOpen }: IMovieModalProp) {
+function MovieModal({
+  movies,
+  queryName,
+  queryId,
+  setModalOpen,
+}: IMovieModalProp) {
   const navigate = useNavigate();
   const bigMovieMatch = useMatch("/movies/:movieId");
-  const onOverlayClick = () => navigate("/");
+  const bigTvMatch = useMatch("/tv/:tvShowId");
+  const onOverlayClick = () => navigate(-1);
 
   const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    movies.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
+    (bigMovieMatch?.params.movieId || bigTvMatch?.params.tvShowId) &&
+    movies?.find(
+      (movie) =>
+        String(movie.id) ===
+        (bigMovieMatch?.params.movieId || bigTvMatch?.params.tvShowId)
+    );
 
   return (
     <AnimatePresence onExitComplete={() => setModalOpen(false)}>
-      {bigMovieMatch ? (
+      {bigMovieMatch || bigTvMatch ? (
         <>
           <Overlay
             onClick={onOverlayClick}
@@ -87,7 +98,10 @@ function MovieModal({ movies, queryId, setModalOpen }: IMovieModalProp) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, type: "tween" }}
-            layoutId={generateUniqueId(queryId, +bigMovieMatch.params.movieId!)}
+            layoutId={generateUniqueId(
+              queryId,
+              +bigMovieMatch?.params.movieId! || +bigTvMatch?.params.tvShowId!
+            )}
           >
             {clickedMovie && (
               <>
@@ -106,3 +120,5 @@ function MovieModal({ movies, queryId, setModalOpen }: IMovieModalProp) {
 }
 
 export default MovieModal;
+
+// overview 내용이 많을 경우 스크롤이 동작할 수 있게 만들기

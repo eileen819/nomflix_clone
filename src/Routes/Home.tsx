@@ -4,7 +4,7 @@ import requests from "../api/requests";
 import Row from "../components/Row";
 
 const Wrapper = styled.div`
-  background-color: black;
+  background-color: ${(props) => props.theme.black};
   /* height: 100%; */
   position: relative;
   overflow-x: hidden;
@@ -26,28 +26,28 @@ function Home() {
       />
       <SlideWrapper>
         <Row
+          title="Trending Movies"
+          queryName="movies"
+          queryId="trending"
+          queryUrl={requests.getTrendingMovies}
+        />
+        <Row
           title="Popular Movies"
           queryName="movies"
           queryId="popular"
           queryUrl={requests.getPopularMovies}
         />
         <Row
-          title="Upcoimg Movies"
+          title="Upcomig Movies"
           queryName="movies"
           queryId="upcoming"
           queryUrl={requests.getUpcomingMovies}
         />
         <Row
-          title="On The Air TV"
-          queryName="tv"
-          queryId="upcoming"
-          queryUrl={requests.getOnTheAirTv}
-        />
-        <Row
-          title="Popular TV"
-          queryName="tv"
-          queryId="popular"
-          queryUrl={requests.getpopularTv}
+          title="Top Rated Movies"
+          queryName="movies"
+          queryId="topRated"
+          queryUrl={requests.getTopRatedMovies}
         />
       </SlideWrapper>
     </Wrapper>

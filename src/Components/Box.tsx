@@ -64,6 +64,7 @@ interface IBoxProps {
   id: number;
   index: number;
   queryId: string;
+  queryName: string;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   backdrop_path: string;
   poster_path: string;
@@ -76,6 +77,7 @@ function Box({
   id,
   index,
   queryId,
+  queryName,
   backdrop_path,
   poster_path,
   title,
@@ -84,8 +86,12 @@ function Box({
 }: IBoxProps) {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
-  const onBoxClicked = (id: number) => {
-    navigate(`/movies/${id}`);
+  const onBoxClicked = (id: number, queryName: string) => {
+    if (queryName === "tv") {
+      navigate(`/tv/${id}`);
+    } else {
+      navigate(`movies/${id}`);
+    }
     setModalOpen(true);
   };
   return (
@@ -93,7 +99,7 @@ function Box({
       <Card
         custom={index}
         layoutId={generateUniqueId(queryId, id)}
-        onClick={() => onBoxClicked(id)}
+        onClick={() => onBoxClicked(id, queryName)}
         variants={boxVariants}
         initial="normal"
         whileHover="hover"
